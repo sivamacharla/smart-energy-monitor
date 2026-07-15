@@ -1,0 +1,39 @@
+mqtt:
+  host: localhost
+  port: 1883
+  publish_interval_sec: 2
+  telemetry_topic_template: "energy/{device_id}/telemetry"
+  subscribe_topic: "energy/+/telemetry"
+  client_id_prefix: "energy-ingest"
+
+ingestion:
+  buffer_size_per_device: 200   # bounded deque -> constant memory footprint on embedded HW
+  batch_flush_size: 20
+  raw_data_path: "data/raw/telemetry.csv"
+  quarantine_path: "data/raw/quarantine.jsonl"
+
+aws_iot:
+  enabled: false                # flip true once endpoint/certs are provisioned
+  endpoint: "your-ats-endpoint.iot.us-east-1.amazonaws.com"
+  root_ca: "certs/AmazonRootCA1.pem"
+  private_key: "certs/private.pem.key"
+  certificate: "certs/certificate.pem.crt"
+  thing_name: "smart-energy-gateway"
+  publish_topic: "energy/cloud/ingest"
+  local_fallback_path: "data/processed/cloud_sync.jsonl"
+
+alerting:
+  alerts_path: "data/processed/alerts.jsonl"
+  thresholds_w:
+    hvac_01: 2600
+    water_heater_01: 1700
+    fridge_01: 220
+    lighting_01: 160
+  spike_pct: 0.6          # >60% jump vs rolling average triggers a spike alert
+  offline_timeout_sec: 30
+  sustained_minutes: 5    # sustained above threshold -> peak-hour inefficiency alert
+
+analytics:
+  raw_data_path: "data/raw/telemetry.csv"
+  output_dir: "output/plots"
+  summary_csv: "data/processed/summary_stats.csv"

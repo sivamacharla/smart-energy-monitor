@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# generated data / artifacts
+data/raw/*.csv
+data/raw/quarantine.jsonl
+data/processed/*.jsonl
+data/processed/*.csv
+output/plots/*.png
+!**/.gitkeep
+
+# broker runtime state
+mosquitto/data/
+mosquitto/log/
+
+# real AWS IoT device certs -- never commit these
+certs/
+
+.pytest_cache/
+*.egg-info/
